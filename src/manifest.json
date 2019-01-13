@@ -1,0 +1,53 @@
+{
+	"manifest_version": 2,
+    "name": "Issue redirect",
+    "version": "1.0.0",
+
+	"description": "Redirect to issue tracker based on selected text",
+    "icons": {
+        "16": "icons/nav_redo_green_16.png",
+        "48": "icons/nav_redo_green_48.png",
+        "128": "icons/nav_redo_green_128.png"
+    },
+    
+	"browser_action": {
+		"default_icon": {
+            "16": "icons/nav_redo_green_16.png",
+            "24": "icons/nav_redo_green_24.png",
+            "32": "icons/nav_redo_green_32.png"
+        },
+		"default_popup": "popup.html"
+    },
+    
+    "permissions": ["contextMenus", "storage", "activeTab"],
+
+    "options_ui": {
+        "page": "options.html",
+        "chrome_style": true,
+        "open_in_tab": false
+    },
+    
+    "content_scripts": [
+        {
+          "matches": ["<all_urls>"],
+          "js": ["selection-extension.js"],
+          "run_at": "document_start",
+          "all_frames": true
+        }
+    ],
+
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+
+    "commands": {
+        "smart-redirect": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+A",
+                "mac": "Command+Shift+A"
+            },
+            "description": "Smart redirect"
+        }
+    }
+}

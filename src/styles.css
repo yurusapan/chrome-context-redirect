@@ -1,0 +1,41 @@
+.issue-redirect-popup {
+    width: 250px;
+}
+
+.btn {
+    padding: 3px 7px;
+}
+
+.glyphicon {
+    top: 2px;
+}
+
+.list-group {
+    margin: 0;
+}
+
+.list-group-item {
+    border-left: none;
+    border-right: none;
+}
+
+.list-group-item:first-child {
+    border-top: none;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+
+.panel {
+    border: none;
+    margin: 0;
+}
+
+.panel-body {
+    padding: 0;
+}
+
+.panel-footer {
+    padding: 5px 7px;
+}
