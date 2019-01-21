@@ -2,6 +2,28 @@
     width: 250px;
 }
 
+.issue-redirect-options {
+    width: 800px;
+}
+
+.redirect-list-error {
+    color: #ca0c0c;
+    margin-left: 5px;
+}
+
+.issue-redirect-popup .alert, .issue-redirect-options .alert {
+    margin: 5px;
+    padding: 5px;
+}
+
+input[type="text"] {
+    width: 100%;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
 .btn {
     padding: 3px 7px;
 }

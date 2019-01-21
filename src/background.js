@@ -10,22 +10,6 @@ function goToItem(item, selection) {
     chrome.tabs.create({ url });
 }
 
-function withSelection(actionFn) {
-    chrome.tabs.query({
-        active: true,
-        windowId: chrome.windows.WINDOW_ID_CURRENT
-    }, function (tab) {
-        chrome.tabs.sendMessage(tab[0].id, {
-            method: 'getSelection'
-        }, function (response) {
-            if (!response || !response.data) return;
-            const selection = response.data.trim();
-            if (!selection.length) return;
-            actionFn(selection)
-        });
-    });
-}
-
 function itemRedirect(item) {
     if (!item || !item.pattern) return;
     withSelection(function(selection) {
@@ -39,6 +23,22 @@ function withRedirectList(actionFn) {
     }, function(data) {
         const redirectList = data && data.redirectList || [];
         actionFn(redirectList);
+    });
+}
+
+function withSelection(actionFn) {
+    chrome.tabs.query({
+        active: true,
+        windowId: chrome.windows.WINDOW_ID_CURRENT
+    }, function (tab) {
+        chrome.tabs.sendMessage(tab[0].id, {
+            method: 'getSelection'
+        }, function (response) {
+            if (!response || !response.data) return;
+            const selection = response.data.trim();
+            if (!selection.length) return;
+            actionFn(selection)
+        });
     });
 }
 
@@ -58,19 +58,31 @@ chrome.commands.onCommand.addListener(function(command) {
     }
 });
 
-chrome.runtime.onInstalled.addListener(function() {
-    withRedirectList(function(redirectList) {
-        if (!redirectList.length) return;
-
-        for (let i = 0; i < redirectList.length; i++) {
-            const item = redirectList[i];
-            chrome.contextMenus.create({
-                "id": `${CONTEXT_MENU_ID_PREFIX}${i}`,
-                "title": item.name,
-                "contexts": ["selection"]
-            });
-        }
+function refreshContextMenus() {
+    chrome.contextMenus.removeAll(function() {
+        withRedirectList(function(redirectList) {
+            if (!redirectList.length) return;
+    
+            for (let i = 0; i < redirectList.length; i++) {
+                const item = redirectList[i];
+                chrome.contextMenus.create({
+                    "id": `${CONTEXT_MENU_ID_PREFIX}${i}`,
+                    "title": item.name,
+                    "contexts": ["selection"]
+                });
+            }
+        });
     });
+}
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.method == "refreshContextMenus") {
+        refreshContextMenus();
+    }
+});
+
+chrome.runtime.onInstalled.addListener(function() {
+    refreshContextMenus();
 
     chrome.contextMenus.onClicked.addListener(function(info) {
         if (!info.menuItemId.startsWith(CONTEXT_MENU_ID_PREFIX)) return;

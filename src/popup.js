@@ -1,43 +1,11 @@
 let redirectList = [];
-
-function findSmartRedirectItem(list, selection) {
-    return list.find(t => selection.startsWith(t.smartPrefix));
-}
-
-function goToItem(item, selection) {
-    if (!selection.startsWith(item.smartPrefix)) selection = `${item.smartPrefix}${selection}`
-    const url = item.pattern.replace("%s", selection);
-    chrome.tabs.create({ url });
-}
-
-function withSelection(actionFn) {
-    chrome.tabs.query({
-        active: true,
-        windowId: chrome.windows.WINDOW_ID_CURRENT
-    }, function (tab) {
-        chrome.tabs.sendMessage(tab[0].id, {
-            method: 'getSelection'
-        }, function (response) {
-            if (!response || !response.data) return;
-            const selection = response.data.trim();
-            if (!selection.length) return;
-            actionFn(selection)
-        });
-    });
-}
-
-function itemRedirect(item) {
-    if (!item || !item.pattern) return;
-    withSelection(function(selection) {
-        goToItem(item, selection);
-    });
-}
+let background = chrome.extension.getBackgroundPage();
 
 function smartRedirect() {
-    withSelection(function(selection) {
-        const redirectItem = findSmartRedirectItem(redirectList, selection);
+    background.withSelection(function(selection) {
+        const redirectItem = background.findSmartRedirectItem(redirectList, selection);
         if (!redirectItem) return;
-        goToItem(redirectItem, selection);
+        background.goToItem(redirectItem, selection);
     });
 }
 
@@ -47,13 +15,23 @@ function getItemElement(item) {
     element.classList.add("list-group-item");
     element.innerText = item.name;
     element.addEventListener('click', function () {
-        itemRedirect(item);
+        background.itemRedirect(item);
     });
     return element;
 }
 
 function pushRedirectList() {
     const redirectListContainer = document.getElementById('redirect-list-container');
+
+    if (!redirectList.length) {
+        let warningElement = document.createElement('div');
+        warningElement.classList.add('alert');
+        warningElement.classList.add('alert-warning');
+        warningElement.innerText = 'No configuration';
+        redirectListContainer.appendChild(warningElement);
+        return;
+    }
+
     for (let i = 0; i < redirectList.length; i++) {
         redirectListContainer.appendChild(getItemElement(redirectList[i]));
     }

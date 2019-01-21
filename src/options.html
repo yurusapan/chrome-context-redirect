@@ -2,12 +2,28 @@
 <html>
 <head>
     <title>Issue redirect options</title>
-</head>
-<body>
-    <div id="redirect-list-container">
-    </div>
 
-    <button id="save">Save</button>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body class="issue-redirect-options">
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th style="width: 200px;">Name *</th>
+                <th>URL *</th>
+                <th style="width: 200px;">Prefix</th>
+                <th style="width: 50px;">&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody id="redirect-list-container">
+        </tbody>
+    </table>
+
+    <div id="footer" class="panel-footer">
+        <button id="save" class="btn btn-success">Save</button>
+        <button id="add" class="btn btn-default">Add item</button>
+    </div>
 
     <script src="options.js"></script>
 </body>
