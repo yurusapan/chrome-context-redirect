@@ -19,7 +19,7 @@
 		"default_popup": "popup.html"
     },
     
-    "permissions": ["contextMenus", "storage", "activeTab"],
+    "permissions": ["contextMenus", "storage", "activeTab", "tabs"],
 
     "options_ui": {
         "page": "options.html",

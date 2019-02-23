@@ -1,11 +1,19 @@
-let redirectList = [];
-let background = chrome.extension.getBackgroundPage();
+const background = chrome.extension.getBackgroundPage();
+const selectionInputElement = document.getElementById('selection-input');
+
+background.withSelection(function(selection) {
+    selectionInputElement.value = selection;
+})
+
+function withInputText(actionFn) {
+    const inputText = selectionInputElement.value;
+    if (!inputText || !inputText.length) return;
+    actionFn(inputText.trim());
+}
 
 function smartRedirect() {
-    background.withSelection(function(selection) {
-        const redirectItem = background.findSmartRedirectItem(redirectList, selection);
-        if (!redirectItem) return;
-        background.goToItem(redirectItem, selection);
+    withInputText(function(inputText) {
+        background.smartRedirectCore(inputText);
     });
 }
 
@@ -15,12 +23,14 @@ function getItemElement(item) {
     element.classList.add("list-group-item");
     element.innerText = item.name;
     element.addEventListener('click', function () {
-        background.itemRedirect(item);
+        withInputText(function(inputText) {
+            background.goToItem(item, inputText);
+        });
     });
     return element;
 }
 
-function pushRedirectList() {
+function pushRedirectList(redirectList) {
     const redirectListContainer = document.getElementById('redirect-list-container');
 
     if (!redirectList.length) {
@@ -38,11 +48,8 @@ function pushRedirectList() {
 }
 
 function restoreOptions() {
-    chrome.storage.sync.get({
-        redirectList: []
-    }, function(data) {
-        redirectList = data && data.redirectList || [];
-        pushRedirectList();
+    background.withRedirectList(function(redirectList) {
+        pushRedirectList(redirectList);
     });
 }
 
