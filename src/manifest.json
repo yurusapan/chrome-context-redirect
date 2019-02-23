@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
     "name": "Issue redirect",
-    "version": "1.0.0",
+    "version": "1.0.1",
 
 	"description": "Redirect to issue tracker based on selected text",
     "icons": {
